@@ -10,19 +10,13 @@ app.use(cors());
 const repositories = [];
 
 app.get("/repositories", (request, response) => {
-  const { title } = request.query;
-
-  const results = title 
-    ? repositories.filter(repository => repository.title.includes(title)) 
-    : repositories;
-
-  return response.json(results);
+  return response.json(repositories);
 });
 
 app.post("/repositories", (request, response) => {
-  const { title, url, techs } = request.body;
+  const { title, url, techs, likes = 0 } = request.body;
 
-  const repository = { id: uniqid(), title, url, techs };
+  const repository = { id: uniqid(), title, url, techs, likes };
   repositories.push(repository);
 
   return response.json(repository);
