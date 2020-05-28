@@ -20,6 +20,8 @@ function validateRepositoryId(request, response, next) {
   return next();
 }
 
+app.use('/repositories/:id', validateRepositoryId);
+
 app.get("/repositories", (request, response) => {
   return response.json(repositories);
 });
@@ -41,7 +43,7 @@ app.post("/repositories", (request, response) => {
   
 });
 
-app.put("/repositories/:id", validateRepositoryId, (request, response) => {
+app.put("/repositories/:id", (request, response) => {
   const { id } = request.params;
   const { title, url, techs } = request.body;
 
@@ -52,11 +54,10 @@ app.put("/repositories/:id", validateRepositoryId, (request, response) => {
   }
 
   const repository = {
-    id,
+    ...repositories[repositoryIndex],
     title,
     url,
     techs,
-    likes: repositories[repositoryIndex].likes,
   };
 
   repositories[repositoryIndex] = repository;
@@ -87,10 +88,14 @@ app.post("/repositories/:id/like", (request, response) => {
     return response.status(400).json({ error: 'Repository not found' });
   }
 
-  repositories[repositoryIndex].likes =
-    (Number(repositories[repositoryIndex].likes) || 0) + 1;
+  const repository = {
+    ...repositories[repositoryIndex],
+    likes: ++repositories[repositoryIndex].likes
+  };
 
-  return response.json(repositories[repositoryIndex]);
+  repositories[repositoryIndex] = repository;
+
+  return response.json(repository);
 });
 
 module.exports = app;
