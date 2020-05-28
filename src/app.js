@@ -20,8 +20,6 @@ function validateRepositoryId(request, response, next) {
   return next();
 }
 
-app.use('/repositories/:id', validateRepositoryId);
-
 app.get("/repositories", (request, response) => {
   return response.json(repositories);
 });
@@ -43,7 +41,7 @@ app.post("/repositories", (request, response) => {
   
 });
 
-app.put("/repositories/:id", (request, response) => {
+app.put("/repositories/:id", validateRepositoryId, (request, response) => {
   const { id } = request.params;
   const { title, url, techs } = request.body;
 
